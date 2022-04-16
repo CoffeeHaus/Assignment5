@@ -12,12 +12,12 @@ void printNames( )
 {
     /* TODO : Fill in you and your partner's names (or N/A if you worked individually) */
     printf("This solution was completed by:\n");
-    printf("<student name #1>\n");
-    printf("<student name #2 (if no partner write \"N/A\")>\n");
+    printf("Samantha Murray\n");
+    printf("Andrew Neumann\n");
 }
 
 /* OPTIONAL HELPER FUNCTION
- * buildGraph
+ * buildGraph 
  *
  * IMPORTANT NOTE: This is an entirely optional helper function which is only called by student implemented functions.
  * Creates a new graph to represent the given maze.  
@@ -29,7 +29,75 @@ Graph* buildGraph( array2D* maze /* and other parameters you find helpful */  )
     /* HINT 1: To solve this, my solution used the functions createGraph and setEdge from graph.c */
     /* HINT 2: My solution also used createPoint from point2D.c */
 
-    return NULL; /* TODO: Replace with your graph representing maze */
+    int i, j;
+    int finCount = -1;
+    Point2D start;
+    Point2D finish[20];
+
+    Graph* g = createGraph( maze->length*maze->width );
+
+    for( i=1; i<maze->length-1; i++ )
+    {
+        for( j=1; j<maze->width-1; j++ )
+        {
+            Point2D p = createPoint(i,j);
+
+            //++
+            if( maze->array2D[i+1] [j+1] != 'X' ) { //check if next step is X
+                setEdge( g, p, createPoint(i+1,j+1), 1 ); //create an edge and a point
+                
+                if ( maze->array2D[i+1] [j+1] == 'S' ) { //if the point is S, save it in start
+                    start = createPoint(i+1,j+1);
+                }
+
+                if ( maze->array2D[i+1] [j+1] == 'F' ) { //if the point is S, save it in finish
+                    finish[finCount++] = createPoint(i+1,j+1);
+                }
+            }
+
+            //+-
+            if( maze->array2D[i+1] [j-1] != 'X' ) { //check if next step is X
+                setEdge( g, p, createPoint(i+1,j-1), 1 ); //create an edge and a point
+
+                if ( maze->array2D[i+1] [j-1] == 'S' ) { //if the point is S, save it in start
+                    start = createPoint(i+1,j-1);
+                }
+
+                if ( maze->array2D[i+1] [j-1] == 'F' ) { //if the point is S, save it in finish
+                    finish[finCount++] = createPoint(i+1,j-1);
+                }
+            }
+
+            //-+
+            if( maze->array2D[i-1] [j+1] != 'X' ) { //check if next step is X
+                setEdge( g, p, createPoint(i-1,j+1), 1 ); //create an edge and a point
+
+                if ( maze->array2D[i-1] [j+1] == 'S' ) { //if the point is S, save it in start
+                    start = createPoint(i-1,j+1);
+                }
+
+                if ( maze->array2D[i-1] [j+1] == 'F' ) { //if the point is S, save it in finish
+                    finish[finCount++] = createPoint(i-1,j+1);
+                }
+            }
+
+            //--
+            if( maze->array2D[i-1] [j-1] != 'X' ) { //check if next step is X
+                setEdge( g, p, createPoint(i-1,j-1), 1 ); //create an edge and a point
+
+                if ( maze->array2D[i-1] [j-1] == 'S' ) { //if the point is S, save it in start
+                    start = createPoint(i-1,j-1);
+                }
+
+                if ( maze->array2D[i-1] [j-1] == 'F' ) { //if the point is S, save it in finish
+                    finish[finCount++] = createPoint(i-1,j-1);
+                }
+            }
+                
+        }
+    }
+
+    return g; /* TODO: Replace with your graph representing maze */
 }
 
 /* hasPath
@@ -42,8 +110,11 @@ pathResult hasPath( array2D *maze )
 {
     //TODO: Complete this function
     /* HINT 1: To solve this, my solution used the functions createGraph, freeGraph, setEdge, dijkstrasAlg, getDistance from graph.c */
-    /* HINT 2: My solution also used createPoint from point2D.c */
-    /* HINT 3: You might also consider using the new helper function buildGraph to build the graph representing maze. */
+    /* HINT 2: My solution also used createPoint from point2D.c */-
+    /* HINT 3: You might also consider using the new helper function buildGraph to build the graph representing maze. *///
+    //
+
+    Graph g = buildGraph(maze);
 
     return PATH_UNKNOWN; /* TODO: Replace with PATH_FOUND or PATH_IMPOSSIBLE based on whether a path exists */
 }
