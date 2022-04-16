@@ -22,78 +22,88 @@ void printNames()
  * IMPORTANT NOTE: This is an entirely optional helper function which is only called by student implemented functions.
  * Creates a new graph to represent the given maze.
  */
-Graph* buildGraph(array2D* maze /* and other parameters you find helpful */)
+Graph* buildGraph(array2D* maze, Point2D* start, int k /* and other parameters you find helpful */)
 {
     //OPTIONAL TODO: Translate the given maze into a graph.  'X' represents impassable locations.  Only moves of up, down, left, and right are allowed. 
     /* With the right parameters this can be used by all three functions below to build the graph representing their different maze problems. */
     /* HINT 1: To solve this, my solution used the functions createGraph and setEdge from graph.c */
     /* HINT 2: My solution also used createPoint from point2D.c */
 
+    /*
+     * NOTES:
+     * k parameter will only be applicable for findTunnelRoute i think. for the rest we can just pass in 0.
+     * definitely need to add some other stuff for findTunnelRoute as well
+     * added a Point2D pointer parameter so buildGraph can return the position of S for use in the other functions
+     * not sure how to handle finish considering there might be multiple finishes yet so that's a WIP
+     * the array i have for them is kind of just a place holder
+     * - sam
+     */
+
     int i, j;
+    int xLimit = k;
     int finCount = -1;
-    Point2D start;
+    //Point2D start;
     Point2D finish[20];
 
     Graph* g = createGraph(maze->length * maze->width);
 
-    for (i = 1; i < maze->length - 1; i++)
+    for( i=1; i<maze->length-1; i++ )
     {
-        for (j = 1; j < maze->width - 1; j++)
+        for( j=1; j<maze->width-1; j++ )
         {
-            Point2D p = createPoint(i, j);
+            Point2D p = createPoint(i,j);
 
-            //++
-            if (maze->array2D[i + 1][j + 1] != 'X') { //check if next step is X
-                setEdge(g, p, createPoint(i + 1, j + 1), 1); //create an edge and a point
-
-                if (maze->array2D[i + 1][j + 1] == 'S') { //if the point is S, save it in start
-                    start = createPoint(i + 1, j + 1);
+            //up i++
+            if( maze->array2D[i+1][j] != 'X' ) { //check if next step is X
+                setEdge( g, p, createPoint(i+1,j), 1 ); //create an edge and a point
+                
+                if ( maze->array2D[i+1][j] == 'S' ) { //if the point is S, save it in start
+                    *start = createPoint(i+1,j);
                 }
 
-                if (maze->array2D[i + 1][j + 1] == 'F') { //if the point is S, save it in finish
-                    finish[finCount++] = createPoint(i + 1, j + 1);
-                }
-            }
-
-            //+-
-            if (maze->array2D[i + 1][j - 1] != 'X') { //check if next step is X
-                setEdge(g, p, createPoint(i + 1, j - 1), 1); //create an edge and a point
-
-                if (maze->array2D[i + 1][j - 1] == 'S') { //if the point is S, save it in start
-                    start = createPoint(i + 1, j - 1);
-                }
-
-                if (maze->array2D[i + 1][j - 1] == 'F') { //if the point is S, save it in finish
-                    finish[finCount++] = createPoint(i + 1, j - 1);
+                if ( maze->array2D[i+1][j] == 'F' ) { //if the point is F, save it in finish
+                    finish[finCount+1] = createPoint(i+1,j);
                 }
             }
 
-            //-+
-            if (maze->array2D[i - 1][j + 1] != 'X') { //check if next step is X
-                setEdge(g, p, createPoint(i - 1, j + 1), 1); //create an edge and a point
+            //down i--
+            if( maze->array2D[i-1] [j] != 'X' ) { //check if next step is X
+                setEdge( g, p, createPoint(i-1,j), 1 ); //create an edge and a point
 
-                if (maze->array2D[i - 1][j + 1] == 'S') { //if the point is S, save it in start
-                    start = createPoint(i - 1, j + 1);
+                if ( maze->array2D[i-1] [j] == 'S' ) { //if the point is S, save it in start
+                    *start = createPoint(i-1,j);
                 }
 
-                if (maze->array2D[i - 1][j + 1] == 'F') { //if the point is S, save it in finish
-                    finish[finCount++] = createPoint(i - 1, j + 1);
-                }
-            }
-
-            //--
-            if (maze->array2D[i - 1][j - 1] != 'X') { //check if next step is X
-                setEdge(g, p, createPoint(i - 1, j - 1), 1); //create an edge and a point
-
-                if (maze->array2D[i - 1][j - 1] == 'S') { //if the point is S, save it in start
-                    start = createPoint(i - 1, j - 1);
-                }
-
-                if (maze->array2D[i - 1][j - 1] == 'F') { //if the point is S, save it in finish
-                    finish[finCount++] = createPoint(i - 1, j - 1);
+                if ( maze->array2D[i-1] [j] == 'F' ) { //if the point is F, save it in finish
+                    finish[finCount+1] = createPoint(i+1,j);
                 }
             }
 
+            //right j++
+            if( maze->array2D[i] [j+1] != 'X' ) { //check if next step is X
+                setEdge( g, p, createPoint(i,j+1), 1 ); //create an edge and a point
+
+                if ( maze->array2D[i] [j+1] == 'S' ) { //if the point is S, save it in start
+                    *start = createPoint(i,j+1);
+                }
+
+                if ( maze->array2D[i] [j+1] == 'F' ) { //if the point is F, save it in finish
+                    finish[finCount+1] = createPoint(i,j+1);
+                }
+            }
+
+            //left j--
+            if( maze->array2D[i] [j-1] != 'X' ) { //check if next step is X
+                setEdge( g, p, createPoint(i,j-1), 1 ); //create an edge and a point
+
+                if ( maze->array2D[i] [j-1] == 'S' ) { //if the point is S, save it in start
+                    *start = createPoint(i-1,j-1);
+                }
+
+                if ( maze->array2D[i] [j-1] == 'F' ) { //if the point is F, save it in finish
+                    finish[finCount+1] = createPoint(i,j-1);
+                }
+            }
         }
     }
 
@@ -112,7 +122,13 @@ pathResult hasPath(array2D* maze)
     /* HINT 1: To solve this, my solution used the functions createGraph, freeGraph, setEdge, dijkstrasAlg, getDistance from graph.c */
     /* HINT 2: My solution also used createPoint from point2D.c */
     /* HINT 3: You might also consider using the new helper function buildGraph to build the graph representing maze. */
+    Point2D start, finish;
+    Graph* g = buildGraph(maze, &start, 0);
 
+    dijkstrasAlg(g, start);
+    getDistance(g, start, finish);
+    
+    freeGraph(g);
     return PATH_UNKNOWN; /* TODO: Replace with PATH_FOUND or PATH_IMPOSSIBLE based on whether a path exists */
 }
 
