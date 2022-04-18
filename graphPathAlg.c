@@ -1,6 +1,6 @@
 #include "graph.h"
 #include "graphPathAlg.h"
-
+#include <math.h>
 
 /* printNames
  * input: none
@@ -158,12 +158,13 @@ pathResult findTunnelRoute(array2D* maze, int k)
     //effectivly this is using the same int to carry two different pieces of information, akin to IP subnetting.
     Point2D start;
     Point2D finish;
-    int bits = floor(log2(maze->length * maze->width)) ;
+    int bits = log2(maze->length * maze->width) ;
 
     Graph* g = buildGraph(maze, true, &start, &finish);
     dijkstrasAlg(g, start);
 
     int distance = getDistance(g, start, finish);
+
     freeGraph(g);
     
     //This doesn't have any importance to the program,
