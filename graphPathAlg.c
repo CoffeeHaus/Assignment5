@@ -25,7 +25,7 @@ Graph* buildGraph( array2D* maze, bool tunneling, Point2D * start, Point2D* fini
 {
     int x, yz, y, xz;
     int finCount = 0;
-    int size = maze->length * maze->width;
+    int bits = floor(log2(maze->length * maze->width)) ;// finds how many bits are needed to store normal movements
     Point2D offset[4] = {
            {0, 1},  //right
            {0, -1}, //left
@@ -62,9 +62,9 @@ Graph* buildGraph( array2D* maze, bool tunneling, Point2D * start, Point2D* fini
                     setEdge(g, p, createPoint(xz, yz), 1); //create an edge and a point
 
                 }
-                else if(tunneling && maze->array2D[xz][yz] == 'X')
+                else if(tunneling && maze->array2D[xz][yz] == 'X')// If the point is a X then the movement will cost  1<< bits which makes it not interfer with count of normal movements
                 {
-                    setEdge(g, p, createPoint(xz, yz), size); //create an edge and a point
+                    setEdge(g, p, createPoint(xz, yz), 1 << bits); 
                 }
                 
             }
@@ -158,15 +158,19 @@ pathResult findTunnelRoute(array2D* maze, int k)
     //effectivly this is using the same int to carry two different pieces of information, akin to IP subnetting.
     Point2D start;
     Point2D finish;
-    int size = maze->length * maze->width;
+    int bits = floor(log2(maze->length * maze->width)) ;
 
     Graph* g = buildGraph(maze, true, &start, &finish);
     dijkstrasAlg(g, start);
 
     int distance = getDistance(g, start, finish);
     freeGraph(g);
+    
+    //This doesn't have any importance to the program,
+    //this gives me the number of steps that are not wall, but clearing the steps and subtracting the difference.
+    int numOfNonWallSteps = distance - ((distance >> bits)<< bits);
 
-    if (distance / size <= k)
+    if (distance >> bits  <= k)
     {
         return PATH_FOUND;
     }
@@ -175,5 +179,4 @@ pathResult findTunnelRoute(array2D* maze, int k)
         return PATH_IMPOSSIBLE;
     }
 
-    return PATH_UNKNOWN; /* TODO: Replace with PATH_FOUND or PATH_IMPOSSIBLE based on whether a path exists */
 }
