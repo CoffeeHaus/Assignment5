@@ -25,7 +25,7 @@ Graph* buildGraph( array2D* maze, bool tunneling, Point2D * start, Point2D* fini
 {
     int x, yz, y, xz;
     int finCount = 0;
-    int bits = floor(log2(maze->length * maze->width)) ;// finds how many bits are needed to store normal movements
+    int bits = log(maze->length * maze->width) / log(2);// finds how many bits are needed to store normal movements
     Point2D offset[4] = {
            {0, 1},  //right
            {0, -1}, //left
@@ -158,7 +158,7 @@ pathResult findTunnelRoute(array2D* maze, int k)
     //effectivly this is using the same int to carry two different pieces of information, akin to IP subnetting.
     Point2D start;
     Point2D finish;
-    int bits = log2(maze->length * maze->width) ;
+    int bits = log(maze->length * maze->width) / log(2);
 
     Graph* g = buildGraph(maze, true, &start, &finish);
     dijkstrasAlg(g, start);
